@@ -21,33 +21,21 @@ public class FairWalletSystem {
 
     // falcon 9 is twice as expensive
     public void takeTrip(Station currentStation, Station destinationStation, JetType jetType) {
+        int tripBetweenOrbits = 250; // Assume this is in BTC
+        int royaltyCostForManMadeStations = 200;
+        int journeyWithinOrbit = 50;
 
-        final int tripBetweenOrbitsOnF1 = 250; // Assume this is in BTC
-        final int royaltyCostForManMadeStations = 200;
-        final int journeyWithOrbitsOnf1 = 50;
+        if (jetType == JetType.FALCON_9) {
+            journeyWithinOrbit *= 2;
+            tripBetweenOrbits *= 2;
+        }
 
-
-        switch (jetType) {
-            case FALCON_1 -> {
-                if (currentStation.stationType != destinationStation.stationType) {
-                    deductFromWallet(royaltyCostForManMadeStations);
-                } else if (currentStation.orbit != destinationStation.orbit) {
-                    // travelling outside orbits
-                    deductFromWallet(tripBetweenOrbitsOnF1);
-                } else {
-                    deductFromWallet(journeyWithOrbitsOnf1);
-                }
-            }
-            case FALCON_9 -> {
-                if (currentStation.stationType != destinationStation.stationType) {
-                    deductFromWallet(royaltyCostForManMadeStations);
-                } else if (currentStation.orbit != destinationStation.orbit) {
-                    deductFromWallet(tripBetweenOrbitsOnF1 * 2);
-                } else {
-                    deductFromWallet(journeyWithOrbitsOnf1 * 2);
-                }
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + jetType);
+        if (currentStation.stationType != destinationStation.stationType) {
+            deductFromWallet(royaltyCostForManMadeStations);
+        } else if (currentStation.orbit != destinationStation.orbit) {
+            deductFromWallet(tripBetweenOrbits);
+        } else {
+            deductFromWallet(journeyWithinOrbit);
         }
     }
 }
